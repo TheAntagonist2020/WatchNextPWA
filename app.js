@@ -33,6 +33,12 @@ const storage = {
 };
 
 // ── Utilities ──
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function showLoading(msg = 'Finding something great...') {
   els.loadingText.textContent = msg;
   els.loading.classList.remove('hidden');
@@ -269,7 +275,7 @@ function renderCard(detail, fallback) {
   els.resultScore.className = `score-badge ${scoreClass(score)}`;
 
   if (poster) {
-    els.resultPoster.innerHTML = `<img src="${poster}" alt="${title}" loading="lazy">`;
+    els.resultPoster.innerHTML = `<img src="${escapeHtml(poster)}" alt="${escapeHtml(title)}" loading="lazy">`;
   } else {
     els.resultPoster.innerHTML = `
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="1">
@@ -304,7 +310,7 @@ function renderCard(detail, fallback) {
     if (val !== undefined && val !== null && val !== 0) {
       const div = document.createElement('div');
       div.className = 'rating-item';
-      div.innerHTML = `<span class="ri-source">${label}</span><span class="ri-value">${val}</span>`;
+      div.innerHTML = `<span class="ri-source">${escapeHtml(label)}</span><span class="ri-value">${escapeHtml(String(val))}</span>`;
       els.resultRatings.appendChild(div);
     }
   });
@@ -387,14 +393,14 @@ async function searchMedia() {
       const div = document.createElement('div');
       div.className = 'result-item';
       const posterHtml = item.poster
-        ? `<img class="ri-poster" src="${item.poster}" alt="">`
+        ? `<img class="ri-poster" src="${escapeHtml(item.poster)}" alt="">`
         : `<div class="ri-poster"></div>`;
-      const scoreHtml = item.score ? `<span class="ri-score">${item.score}</span>` : '';
+      const scoreHtml = item.score ? `<span class="ri-score">${escapeHtml(String(item.score))}</span>` : '';
       div.innerHTML = `
         ${posterHtml}
         <div class="ri-info">
-          <div class="ri-title">${item.title || 'Unknown'}</div>
-          <div class="ri-meta">${item.year || ''} &middot; ${item.mediatype || item.type || ''}</div>
+          <div class="ri-title">${escapeHtml(item.title || 'Unknown')}</div>
+          <div class="ri-meta">${escapeHtml(item.year || '')} &middot; ${escapeHtml(item.mediatype || item.type || '')}</div>
         </div>
         ${scoreHtml}
       `;
@@ -442,8 +448,8 @@ function renderHistory() {
     const div = document.createElement('div');
     div.className = 'history-item';
     div.innerHTML = `
-      <span class="hi-title">${entry.title}</span>
-      <span class="hi-year">${entry.year || ''}</span>
+      <span class="hi-title">${escapeHtml(entry.title)}</span>
+      <span class="hi-year">${escapeHtml(entry.year || '')}</span>
       <span class="hi-action">Open</span>
     `;
     div.addEventListener('click', () => {
