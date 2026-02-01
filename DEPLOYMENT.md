@@ -160,7 +160,7 @@ After opening the PWA in your mobile browser:
 ### iOS (iPhone/iPad):
 
 1. Open the site in **Safari** (must be Safari, not Chrome)
-2. Tap the **Share button** (square with arrow pointing up)
+2. Tap the **Share button** (square with an upward arrow)
 3. Scroll down and tap **"Add to Home Screen"**
 4. Edit the name if desired (default: "What to Watch Next")
 5. Tap **"Add"** in the top right

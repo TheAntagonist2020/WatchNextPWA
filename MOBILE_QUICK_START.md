@@ -57,7 +57,7 @@ Choose the **easiest** method for you:
 ### iPhone/iPad:
 ```
 1. Open in Safari
-2. Tap Share button (⬆️)
+2. Tap Share button (square with upward arrow)
 3. Tap "Add to Home Screen"
 4. Tap "Add"
 ```
@@ -65,7 +65,7 @@ Choose the **easiest** method for you:
 ### Android:
 ```
 1. Open in Chrome
-2. Tap menu (⋮)
+2. Tap menu (three vertical dots)
 3. Tap "Add to Home Screen"
 4. Tap "Add"
 ```
