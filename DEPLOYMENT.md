@@ -82,7 +82,7 @@ Your site will automatically redeploy whenever you push to GitHub!
 
 ### Custom Subdomain:
 
-1. Go to Site Settings → Domain Management
+1. Go to Site Settings > Domain Management
 2. Click "Options" next to your site name
 3. Click "Edit site name"
 4. Enter your desired name: `watchnext.netlify.app`
@@ -162,7 +162,7 @@ After opening the PWA in your mobile browser:
 1. Open the site in **Safari** (must be Safari, not Chrome)
 2. Tap the **Share button** (square with arrow pointing up)
 3. Scroll down and tap **"Add to Home Screen"**
-4. Edit the name if desired (default: "What to Watch")
+4. Edit the name if desired (default: "What to Watch Next")
 5. Tap **"Add"** in the top right
 6. The app icon appears on your home screen!
 
@@ -188,7 +188,7 @@ Want to use your own domain? Here's how:
 
 1. Buy a domain (Namecheap, GoDaddy, Google Domains, etc.)
 2. In GitHub repository settings:
-   - Go to Settings → Pages
+   - Go to Settings > Pages
    - Enter your domain in "Custom domain"
    - Click "Save"
 3. In your domain registrar:
@@ -199,7 +199,7 @@ Want to use your own domain? Here's how:
 
 1. Buy a domain
 2. In Netlify:
-   - Go to Site Settings → Domain Management
+   - Go to Site Settings > Domain Management
    - Click "Add custom domain"
    - Enter your domain
 3. Follow Netlify's DNS instructions
@@ -209,7 +209,7 @@ Want to use your own domain? Here's how:
 
 1. Buy a domain
 2. In Vercel:
-   - Go to Project Settings → Domains
+   - Go to Project Settings > Domains
    - Click "Add"
    - Enter your domain
 3. Update DNS records as instructed

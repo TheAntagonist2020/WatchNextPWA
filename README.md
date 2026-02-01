@@ -7,7 +7,7 @@ A Progressive Web App that helps you decide what to watch next. Pick your next m
 **Want to use this on your phone right now?**
 
 1. **Deploy the app** using one of these free options:
-   - GitHub Pages (recommended): Enable in repository Settings → Pages
+   - GitHub Pages (recommended): Enable in repository Settings > Pages
    - [Netlify](https://netlify.com): Drag & drop deployment
    - [Vercel](https://vercel.com): One-click GitHub integration
 

@@ -10,8 +10,8 @@ Choose the **easiest** option for you:
 
 ### 🟢 GitHub Pages (If you have GitHub)
 1. Go to your repo on GitHub
-2. Click **Settings** → **Pages**
-3. Select branch: `main`, folder: `/`, click **Save**
+2. Click **Settings** > **Pages**
+3. Select branch: `main`, folder: `/ (root)`, click **Save**
 4. ✅ Your URL: `https://YOUR_USERNAME.github.io/WatchNextPWA/`
 
 ### 🔵 Netlify (Drag & Drop)
@@ -103,4 +103,4 @@ Your app is now on your home screen!
 
 **Need API key?**
 - Get free key at [mdblist.com](https://mdblist.com)
-- Open app → Settings (⚙️) → Paste key
+- Open app > Settings (⚙️) > Paste key
