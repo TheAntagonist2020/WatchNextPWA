@@ -309,13 +309,14 @@ function renderCard(detail, fallback) {
     }
   });
 
-  // Stremio button
+  // Stremio buttons
   const typeLower = (type || '').toLowerCase();
   const mediaType = (typeLower === 'show' || typeLower === 'series' || typeLower === 'tv')
     ? 'series' : 'movie';
-  els.watchOnStremio.dataset.imdbId = imdbId;
-  els.watchOnStremio.dataset.type = mediaType;
-  els.watchOnStremio.disabled = !imdbId;
+  els.watchOnStremioWeb.dataset.imdbId = imdbId;
+  els.watchOnStremioWeb.dataset.type = mediaType;
+  els.watchOnStremioWeb.disabled = !imdbId;
+  els.watchOnStremioApp.disabled = !imdbId;
 
   els.resultCard.classList.remove('hidden');
 
@@ -328,30 +329,38 @@ function renderCard(detail, fallback) {
 }
 
 // ── Stremio ──
-function openInStremio() {
-  const imdbId = els.watchOnStremio.dataset.imdbId;
-  const type = els.watchOnStremio.dataset.type;
-  if (!imdbId) {
-    showToast('No IMDB ID available');
-    return;
-  }
+function getStremioData() {
+  const imdbId = els.watchOnStremioWeb.dataset.imdbId;
+  const type = els.watchOnStremioWeb.dataset.type;
+  return { imdbId, type };
+}
 
-  // Try stremio:// deep link (works on iOS/Android with Stremio installed)
+function openStremioWeb() {
+  const { imdbId, type } = getStremioData();
+  if (!imdbId) { showToast('No IMDB ID available'); return; }
+
+  // Stremio Web — works on every device, no app needed
+  const webUrl = `https://web.stremio.com/#/detail/${type}/${imdbId}`;
+  window.open(webUrl, '_blank');
+  setStatus('Opening Stremio Web...');
+}
+
+function openStremioApp() {
+  const { imdbId, type } = getStremioData();
+  if (!imdbId) { showToast('No IMDB ID available'); return; }
+
+  // Try native stremio:// deep link (Stremio Lite on iOS, Stremio on Android/desktop)
   const stremioUrl = `stremio:///detail/${type}/${imdbId}/${type === 'movie' ? imdbId : ''}`;
-
-  // Web fallback
   const webUrl = `https://web.stremio.com/#/detail/${type}/${imdbId}`;
 
-  // On iOS, we try the native link; if it fails, Safari shows nothing,
-  // so we use a timeout to open the web version as fallback
   window.location.href = stremioUrl;
 
-  // Fallback to web after 1.5s if the app didn't open
+  // If the app doesn't open within 2s, fall back to Stremio Web
   const fallbackTimer = setTimeout(() => {
     window.open(webUrl, '_blank');
-  }, 1500);
+  }, 2000);
 
-  // If the page becomes hidden (app opened), cancel fallback
+  // If app opened (page goes hidden), cancel fallback
   const handleVisibility = () => {
     if (document.hidden) {
       clearTimeout(fallbackTimer);
@@ -360,7 +369,7 @@ function openInStremio() {
   };
   document.addEventListener('visibilitychange', handleVisibility);
 
-  setStatus('Opening in Stremio...');
+  setStatus('Opening Stremio Lite...');
 }
 
 // ── Search ──
@@ -449,7 +458,7 @@ function renderHistory() {
     div.addEventListener('click', () => {
       if (entry.imdb_id) {
         const type = (entry.mediatype === 'show' || entry.mediatype === 'series') ? 'series' : 'movie';
-        window.location.href = `stremio:///detail/${type}/${entry.imdb_id}/${type === 'movie' ? entry.imdb_id : ''}`;
+        window.open(`https://web.stremio.com/#/detail/${type}/${entry.imdb_id}`, '_blank');
       }
     });
     els.historyList.appendChild(div);
@@ -505,7 +514,8 @@ function bindEvents() {
   });
 
   // Stremio
-  els.watchOnStremio.addEventListener('click', openInStremio);
+  els.watchOnStremioWeb.addEventListener('click', openStremioWeb);
+  els.watchOnStremioApp.addEventListener('click', openStremioApp);
 
   // History
   els.clearHistory.addEventListener('click', () => {
@@ -589,7 +599,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultDescription: $('resultDescription'),
     resultGenres: $('resultGenres'),
     resultRatings: $('resultRatings'),
-    watchOnStremio: $('watchOnStremio'),
+    watchOnStremioWeb: $('watchOnStremioWeb'),
+    watchOnStremioApp: $('watchOnStremioApp'),
     pickAnother: $('pickAnother'),
     historySection: $('historySection'),
     historyList: $('historyList'),

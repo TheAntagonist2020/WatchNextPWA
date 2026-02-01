@@ -565,10 +565,15 @@ main::-webkit-scrollbar {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
 }
-.card-actions .btn:first-child {
-  flex: 2;
+.card-actions.stacked {
+  flex-direction: column;
+  gap: 8px;
 }
-.card-actions .btn:last-child {
+.card-actions-row {
+  display: flex;
+  gap: 8px;
+}
+.card-actions-row .btn {
   flex: 1;
 }
 
