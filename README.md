@@ -16,7 +16,10 @@ A Progressive Web App that helps you decide what to watch next. Pick your next m
 
 3. **Install as app** (optional): Tap "Add to Home Screen" in your browser menu
 
-See the [Deployment & Mobile Access](#deployment--mobile-access) section below for detailed instructions.
+📖 **Need step-by-step instructions?** See:
+- [📱 MOBILE_QUICK_START.md](MOBILE_QUICK_START.md) - Simple 3-step guide
+- [📋 DEPLOYMENT.md](DEPLOYMENT.md) - Comprehensive deployment guide
+- [Deployment & Mobile Access](#deployment--mobile-access) section below
 
 ## Features
 
