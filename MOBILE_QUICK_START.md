@@ -1,29 +1,36 @@
 # 📱 Mobile Quick Start Guide
 
-**Get WatchNext PWA on your phone in 3 steps!**
+**Get WatchNext PWA on your phone in 3 steps - 100% FREE!**
 
 ---
 
 ## Step 1: Deploy Your App ☁️
 
-Choose the **easiest** option for you:
+### 🟢 GitHub Pages (RECOMMENDED - Completely Free!)
 
-### 🟢 GitHub Pages (If you have GitHub)
-1. Go to your repo on GitHub
+**No domain purchase needed! No credit card required!**
+
+1. Go to your repository on GitHub
 2. Click **Settings** > **Pages**
 3. Select branch: `main`, folder: `/ (root)`, click **Save**
-4. ✅ Your URL: `https://YOUR_USERNAME.github.io/WatchNextPWA/`
+4. Wait 1-2 minutes for deployment
+5. ✅ Your **FREE** URL: `https://YOUR_USERNAME.github.io/WatchNextPWA/`
 
-### 🔵 Netlify (Drag & Drop)
+**That's it!** You now have a free, permanent URL for your app. No costs, no domain to buy.
+
+---
+
+### Other Free Options (If You Prefer)
+
+#### 🔵 Netlify (Also Free)
 1. Go to [netlify.com](https://netlify.com)
 2. Drag your project folder to the site
-3. ✅ Your URL: `https://random-name.netlify.app`
+3. ✅ Free URL: `https://random-name.netlify.app`
 
-### 🟣 Vercel (One Click)
+#### 🟣 Vercel (Also Free)
 1. Go to [vercel.com](https://vercel.com)
-2. Import from GitHub
-3. Click Deploy
-4. ✅ Your URL: `https://your-app.vercel.app`
+2. Import from GitHub and click Deploy
+3. ✅ Free URL: `https://your-app.vercel.app`
 
 ---
 

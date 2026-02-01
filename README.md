@@ -4,15 +4,17 @@ A Progressive Web App that helps you decide what to watch next. Pick your next m
 
 ## 🚀 Quick Start - Access on Mobile
 
-**Want to use this on your phone right now?**
+**Want to use this on your phone right now? It's 100% FREE!**
 
-1. **Deploy the app** using one of these free options:
-   - GitHub Pages (recommended): Enable in repository Settings > Pages
-   - [Netlify](https://netlify.com): Drag & drop deployment
-   - [Vercel](https://vercel.com): One-click GitHub integration
+1. **Deploy the app for FREE** using GitHub Pages:
+   - Go to your repository on GitHub
+   - Click Settings > Pages
+   - Select branch `main`, folder `/ (root)`, click Save
+   - Your free URL: `https://yourusername.github.io/WatchNextPWA/`
+   - **No domain purchase needed!** The GitHub URL works perfectly.
 
-2. **Access on mobile**: Open your deployment URL in your mobile browser
-   - Example: `https://yourusername.github.io/WatchNextPWA/`
+2. **Access on mobile**: Open your free GitHub Pages URL in your mobile browser
+   - Example: `https://TheAntagonist2020.github.io/WatchNextPWA/`
 
 3. **Install as app** (optional): Tap "Add to Home Screen" in your browser menu
 
@@ -20,6 +22,8 @@ A Progressive Web App that helps you decide what to watch next. Pick your next m
 - [📱 MOBILE_QUICK_START.md](MOBILE_QUICK_START.md) - Simple 3-step guide
 - [📋 DEPLOYMENT.md](DEPLOYMENT.md) - Comprehensive deployment guide
 - [Deployment & Mobile Access](#deployment--mobile-access) section below
+
+**Note**: Other free options like Netlify and Vercel are also available, but GitHub Pages is simplest if your code is already on GitHub.
 
 ## Features
 

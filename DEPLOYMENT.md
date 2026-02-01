@@ -2,18 +2,22 @@
 
 This guide provides step-by-step instructions for deploying WatchNext PWA so you can access it from any device, including mobile phones and tablets.
 
+**💰 Cost: $0 - Everything here is completely free!**
+
 ## Table of Contents
-- [GitHub Pages Deployment](#github-pages-deployment)
-- [Netlify Deployment](#netlify-deployment)
-- [Vercel Deployment](#vercel-deployment)
+- [GitHub Pages Deployment](#github-pages-deployment) ⭐ **RECOMMENDED - Free & Simple**
+- [Netlify Deployment](#netlify-deployment) - Also Free
+- [Vercel Deployment](#vercel-deployment) - Also Free
 - [Accessing on Mobile](#accessing-on-mobile)
-- [Custom Domain Setup](#custom-domain-setup)
+- [Advanced: Custom Domain Setup](#advanced-custom-domain-setup) (Optional - costs money)
 
 ---
 
 ## GitHub Pages Deployment
 
-GitHub Pages is the easiest way to deploy if your code is already on GitHub.
+**⭐ RECOMMENDED - Completely Free, No Domain Purchase Needed!**
+
+GitHub Pages is the easiest way to deploy if your code is already on GitHub. You get a free URL that works perfectly: `https://yourusername.github.io/WatchNextPWA/`
 
 ### Step-by-Step:
 
@@ -40,6 +44,7 @@ GitHub Pages is the easiest way to deploy if your code is already on GitHub.
 4. **Your app is live!**
    - URL format: `https://YOUR_USERNAME.github.io/WatchNextPWA/`
    - Example: `https://TheAntagonist2020.github.io/WatchNextPWA/`
+   - **This URL is free and permanent - no need to buy a domain!**
 
 ### Updating Your Deployment:
 
@@ -180,13 +185,21 @@ After opening the PWA in your mobile browser:
 
 ---
 
-## Custom Domain Setup
+## Advanced: Custom Domain Setup
 
-Want to use your own domain? Here's how:
+**⚠️ OPTIONAL - This costs money and is NOT required!**
+
+Your free GitHub Pages URL (`https://yourusername.github.io/WatchNextPWA/`) works perfectly for everything. 
+
+**Only do this if you want a custom domain like `watchnext.com` instead of the free GitHub URL.**
+
+You'll need to:
+- Purchase a domain name (typically $10-15/year)
+- Configure DNS settings
 
 ### GitHub Pages + Custom Domain:
 
-1. Buy a domain (Namecheap, GoDaddy, Google Domains, etc.)
+1. **Buy a domain** (Namecheap, GoDaddy, Google Domains, etc.) - Costs $10-15/year
 2. In GitHub repository settings:
    - Go to Settings > Pages
    - Enter your domain in "Custom domain"
@@ -197,7 +210,9 @@ Want to use your own domain? Here's how:
 
 ### Netlify Custom Domain:
 
-1. Buy a domain
+**Only if you want a custom domain instead of the free Netlify URL**
+
+1. **Buy a domain** (costs $10-15/year)
 2. In Netlify:
    - Go to Site Settings > Domain Management
    - Click "Add custom domain"
@@ -207,7 +222,9 @@ Want to use your own domain? Here's how:
 
 ### Vercel Custom Domain:
 
-1. Buy a domain
+**Only if you want a custom domain instead of the free Vercel URL**
+
+1. **Buy a domain** (costs $10-15/year)
 2. In Vercel:
    - Go to Project Settings > Domains
    - Click "Add"
