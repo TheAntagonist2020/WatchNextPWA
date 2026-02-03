@@ -63,6 +63,25 @@
             <option value="my">My Lists</option>
           </select>
         </div>
+        <div class="setting-group">
+          <label for="letterboxdFile">Letterboxd Watched Import</label>
+          <p class="help-text">
+            Upload your Letterboxd export CSV (watched.csv, diary.csv, or films.csv).
+            We match by Name/Title + Year (or IMDb ID when available) to hide watched picks.
+            <a href="https://letterboxd.com/settings/data/" target="_blank" rel="noreferrer">Download export</a>
+          </p>
+          <div class="input-row">
+            <input type="file" id="letterboxdFile" accept=".csv,text/csv" multiple>
+            <button id="clearLetterboxd" class="btn secondary small" type="button">Clear</button>
+          </div>
+          <div class="stat-row">
+            <span id="letterboxdStatus" class="status-pill">No data imported</span>
+            <label class="toggle">
+              <input type="checkbox" id="hideWatchedToggle" checked>
+              <span>Hide watched picks</span>
+            </label>
+          </div>
+        </div>
         <div class="btn-row">
           <button id="saveSettings" class="btn primary">Save</button>
           <button id="cancelSettings" class="btn secondary">Cancel</button>
