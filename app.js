@@ -8,6 +8,12 @@ let apiKey = '';
 let cachedLists = [];
 let cachedListItems = {};
 let pickHistory = [];
+let letterboxdWatched = [];
+let hideWatched = true;
+let watchedIndex = {
+  imdb: new Set(),
+  title: new Set(),
+};
 
 // ── DOM ──
 const $ = (id) => document.getElementById(id);
@@ -86,6 +92,95 @@ function formatRuntime(mins) {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
+function normalizeTitle(title) {
+  return (title || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function makeTitleKey(title, year) {
+  return `${normalizeTitle(title)}|${year || ''}`;
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let current = '';
+  let row = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+    if (char === '"' && inQuotes && next === '"') {
+      current += '"';
+      i += 1;
+      continue;
+    }
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && next === '\n') i += 1;
+      row.push(current);
+      if (row.some((cell) => cell !== '')) rows.push(row);
+      row = [];
+      current = '';
+      continue;
+    }
+    if (char === ',' && !inQuotes) {
+      row.push(current);
+      current = '';
+      continue;
+    }
+    current += char;
+  }
+  row.push(current);
+  if (row.some((cell) => cell !== '')) rows.push(row);
+  return rows;
+}
+
+function findHeaderIndex(headers, keys) {
+  const normalized = headers.map((header) =>
+    String(header || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+  );
+  for (const key of keys) {
+    const idx = normalized.indexOf(key);
+    if (idx !== -1) return idx;
+  }
+  return -1;
+}
+
+function rebuildWatchedIndex(entries) {
+  watchedIndex = {
+    imdb: new Set(),
+    title: new Set(),
+  };
+  entries.forEach((entry) => {
+    if (entry.imdbId) watchedIndex.imdb.add(entry.imdbId);
+    if (entry.title) watchedIndex.title.add(makeTitleKey(entry.title, entry.year));
+  });
+}
+
+function updateLetterboxdStatus() {
+  const count = letterboxdWatched.length;
+  els.letterboxdStatus.textContent = count
+    ? `Imported ${count.toLocaleString()} watched titles`
+    : 'No data imported';
+  els.clearLetterboxd.disabled = count === 0;
+}
+
+function isWatched(item) {
+  if (!hideWatched || letterboxdWatched.length === 0) return false;
+  const imdbId = item.imdb_id || item.imdbid || '';
+  if (imdbId && watchedIndex.imdb.has(imdbId)) return true;
+  const title = item.title || item.name || '';
+  const year = item.year || '';
+  if (!title) return false;
+  return watchedIndex.title.has(makeTitleKey(title, year));
+}
+
 // ── Settings ──
 function openSettings() {
   els.settingsPanel.classList.remove('hidden');
@@ -123,6 +218,51 @@ async function loadGenres() {
       els.genreFilter.appendChild(opt);
     });
   }
+}
+
+function importLetterboxdCsv(text) {
+  const rows = parseCsv(text);
+  if (rows.length === 0) {
+    return { entries: [], hasHeader: false };
+  }
+
+  const headers = rows[0];
+  const titleIndex = findHeaderIndex(headers, ['title', 'name', 'filmname']);
+  const yearIndex = findHeaderIndex(headers, ['year', 'filmyear']);
+  const imdbIndex = findHeaderIndex(headers, ['imdbid', 'imdb']);
+
+  if (titleIndex === -1 && imdbIndex === -1) {
+    return { entries: [], hasHeader: false };
+  }
+
+  const entries = [];
+  for (let i = 1; i < rows.length; i += 1) {
+    const row = rows[i];
+    const title = row[titleIndex] ? String(row[titleIndex]).trim() : '';
+    const yearVal = row[yearIndex] ? String(row[yearIndex]).trim() : '';
+    const imdbId = row[imdbIndex] ? String(row[imdbIndex]).trim() : '';
+    if (!title && !imdbId) continue;
+    entries.push({
+      title,
+      year: yearVal,
+      imdbId,
+    });
+  }
+  return { entries, hasHeader: true };
+}
+
+function mergeWatchedEntries(entries) {
+  const byKey = new Map();
+  entries.forEach((entry) => {
+    const imdbKey = entry.imdbId ? `imdb:${entry.imdbId}` : '';
+    const titleKey = entry.title ? `title:${makeTitleKey(entry.title, entry.year)}` : '';
+    const key = imdbKey || titleKey;
+    if (!key) return;
+    if (!byKey.has(key)) {
+      byKey.set(key, entry);
+    }
+  });
+  return Array.from(byKey.values());
 }
 
 // ── Lists ──
@@ -186,6 +326,11 @@ async function getListItems(listId) {
   // Filter by score
   if (minScore > 0) {
     items = items.filter((item) => (item.score || 0) >= minScore);
+  }
+
+  // Filter by Letterboxd watched list
+  if (hideWatched && letterboxdWatched.length > 0) {
+    items = items.filter((item) => !isWatched(item));
   }
 
   cachedListItems[listId] = items;
@@ -525,6 +670,57 @@ function bindEvents() {
     showToast('History cleared', 'success');
   });
 
+  // Letterboxd import
+  els.letterboxdFile.addEventListener('change', async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    showLoading('Importing Letterboxd data...');
+    try {
+      const allEntries = [];
+      let hasValidHeader = false;
+      for (const file of files) {
+        const text = await file.text();
+        const { entries, hasHeader } = importLetterboxdCsv(text);
+        allEntries.push(...entries);
+        if (hasHeader) hasValidHeader = true;
+      }
+      const entries = mergeWatchedEntries(allEntries);
+      if (!hasValidHeader) {
+        showToast('CSV header not recognized. Expected Name/Title + Year or IMDb ID.');
+      } else if (entries.length === 0) {
+        showToast('No Letterboxd titles found in that CSV.');
+      } else {
+        letterboxdWatched = entries;
+        storage.set('letterboxdWatched', letterboxdWatched);
+        rebuildWatchedIndex(letterboxdWatched);
+        updateLetterboxdStatus();
+        cachedListItems = {};
+        showToast(`Imported ${entries.length.toLocaleString()} watched titles.`, 'success');
+      }
+    } catch (err) {
+      showToast('Could not read that CSV file.');
+    } finally {
+      hideLoading();
+      event.target.value = '';
+    }
+  });
+
+  els.clearLetterboxd.addEventListener('click', () => {
+    letterboxdWatched = [];
+    storage.set('letterboxdWatched', []);
+    rebuildWatchedIndex(letterboxdWatched);
+    updateLetterboxdStatus();
+    cachedListItems = {};
+    showToast('Letterboxd data cleared.', 'success');
+  });
+
+  els.hideWatchedToggle.addEventListener('change', () => {
+    hideWatched = els.hideWatchedToggle.checked;
+    storage.set('hideWatched', hideWatched);
+    cachedListItems = {};
+  });
+
   // List source change
   els.defaultList.addEventListener('change', () => {
     storage.set('defaultList', els.defaultList.value);
@@ -605,6 +801,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     historySection: $('historySection'),
     historyList: $('historyList'),
     clearHistory: $('clearHistory'),
+    letterboxdFile: $('letterboxdFile'),
+    clearLetterboxd: $('clearLetterboxd'),
+    letterboxdStatus: $('letterboxdStatus'),
+    hideWatchedToggle: $('hideWatchedToggle'),
     loading: $('loading'),
     loadingText: $('loadingText'),
     statusText: $('statusText'),
@@ -614,8 +814,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load saved data
   apiKey = storage.get('apiKey', '');
   pickHistory = storage.get('history', []);
+  letterboxdWatched = storage.get('letterboxdWatched', []);
+  hideWatched = storage.get('hideWatched', true);
+  rebuildWatchedIndex(letterboxdWatched);
   const savedList = storage.get('defaultList', 'top');
   if (savedList) els.defaultList.value = savedList;
+  els.hideWatchedToggle.checked = hideWatched;
+  updateLetterboxdStatus();
 
   bindEvents();
   await init();
