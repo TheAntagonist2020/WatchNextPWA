@@ -4,6 +4,7 @@
 
 // ── State ──
 const API_BASE = 'https://api.mdblist.com';
+const DEFAULT_API_KEY = 'pzoitdmb31gwbtrfmgrq951rp';
 let apiKey = '';
 let cachedLists = [];
 let cachedListItems = {};
@@ -611,8 +612,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     apiCalls: $('apiCalls'),
   };
 
-  // Load saved data
-  apiKey = storage.get('apiKey', '');
+  // Load saved data — use default key if none stored
+  apiKey = storage.get('apiKey', '') || DEFAULT_API_KEY;
+  storage.set('apiKey', apiKey);
   pickHistory = storage.get('history', []);
   const savedList = storage.get('defaultList', 'top');
   if (savedList) els.defaultList.value = savedList;
