@@ -342,7 +342,13 @@ function openStremioWeb() {
 
   // Stremio Web — works on every device, no app needed
   const webUrl = `https://web.stremio.com/#/detail/${type}/${imdbId}`;
-  window.open(webUrl, '_blank');
+  // Use location.href for iOS Safari (window.open is blocked by popup blocker)
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    window.location.href = webUrl;
+  } else {
+    window.open(webUrl, '_blank');
+  }
   setStatus('Opening Stremio Web...');
 }
 
@@ -622,10 +628,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindEvents();
   await init();
 
-  // Register service worker
+  // Register service worker & handle updates
   if ('serviceWorker' in navigator) {
     try {
-      await navigator.serviceWorker.register('./sw.js');
+      const reg = await navigator.serviceWorker.register('./sw.js');
+      // Check for SW updates on every load
+      reg.update().catch(() => {});
+      // When a new SW is waiting, activate it immediately
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'activated') {
+              // Reload to pick up the fresh cache
+              window.location.reload();
+            }
+          });
+        }
+      });
     } catch (err) {
       console.log('SW registration failed:', err);
     }

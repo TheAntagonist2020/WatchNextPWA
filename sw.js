@@ -1,4 +1,4 @@
-const CACHE_NAME = 'watchnext-v1';
+const CACHE_NAME = 'watchnext-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,14 @@ const ASSETS = [
   './icons/icon-512x512.png'
 ];
 
-// Install - cache core assets
+// App files that should always fetch fresh copies (network-first)
+const APP_FILES = ['index.html', 'app.js', 'app.css'];
+
+function isAppFile(url) {
+  return APP_FILES.some((f) => url.pathname.endsWith(f));
+}
+
+// Install - cache core assets, take over immediately
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
@@ -18,31 +25,48 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-// Activate - clean old caches
+// Activate - purge ALL old caches, claim clients immediately
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch - network first for API, cache first for assets
+// Fetch strategy
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
-  // API calls: network only (don't cache API responses)
+  // Skip non-GET requests
+  if (e.request.method !== 'GET') return;
+
+  // API calls: network only (never cache)
   if (url.hostname === 'api.mdblist.com') {
     e.respondWith(fetch(e.request));
     return;
   }
 
-  // Everything else: cache first, fallback to network
+  // App files (HTML, JS, CSS): network-first so updates always apply
+  if (isAppFile(url) || e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).then((res) => {
+        if (res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => {
+        return caches.match(e.request) || caches.match('./index.html');
+      })
+    );
+    return;
+  }
+
+  // Static assets (icons, images): cache-first for speed
   e.respondWith(
     caches.match(e.request).then((cached) => {
       return cached || fetch(e.request).then((res) => {
-        // Cache new assets dynamically
         if (res.status === 200) {
           const clone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
@@ -50,7 +74,6 @@ self.addEventListener('fetch', (e) => {
         return res;
       });
     }).catch(() => {
-      // Offline fallback
       if (e.request.destination === 'document') {
         return caches.match('./index.html');
       }
